@@ -63,7 +63,7 @@ jobs:
           dbt-workarea-env || true
           setup_repo_env="SETUP_$REPO"
           [[ -z ${!setup_env_repo+x} ]] || unsetup $REPO
-          cp -pr $GITHUB_WORKSPACE/DUNE-DAQ/$REPO $GITHUB_WORKSPACE/dev/sourcecode
+          cp -pr $GITHUB_WORKSPACE/${{ github.repository }} $GITHUB_WORKSPACE/dev/sourcecode
           dbt-build.sh --install
           #dbt-build.sh --lint
           $GITHUB_WORKSPACE/daq-release/scripts/upsify-daq-pkgs.py -w $GITHUB_WORKSPACE/dev -o /tarballs
