@@ -16,7 +16,7 @@
 
 #include "toylibrary/IntPrinter.hpp"
 
-#include "ers/ers.hpp"
+#include "logging/Logging.hpp"
 
 #include <boost/program_options.hpp>
 #include <string>
@@ -60,7 +60,7 @@ main(int argc, char* argv[])
   bpo::notify(vm);
 
   if (vm.count("help")) {
-    std::cout << desc << std::endl; // NOLINT
+    TLOG() << desc << std::endl;
     return 0;
   }
 

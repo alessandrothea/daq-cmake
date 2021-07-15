@@ -9,6 +9,8 @@
 #include "toylibrary/IntPrinter.hpp"
 #include "toylibrary/ValueWrapper.hpp"
 
+#include "logging/Logging.hpp"
+
 #include <pybind11/pybind11.h>
 #include <pybind11/stl.h>
 
@@ -44,7 +46,7 @@ PlayInts(const std::vector<int>& numbers, bool new_line = false)
       numbers_stream << separator;
     numbers_stream << numbers.at(i);
   }
-  std::cout << numbers_stream.str() << std::endl; // NOLINT
+  TLOG() << numbers_stream.str() << std::endl; // NOLINT
 }
 
 namespace python {

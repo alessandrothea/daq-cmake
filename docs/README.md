@@ -202,10 +202,9 @@ glob expressions, and link against the libraries listed after
 subdirectory of the project.
 
 As an example, 
-`daq_add_library(MyProj.cpp *Utils.cpp LINK_LIBRARIES ers::ers)` 
+`daq_add_library(MyProj.cpp *Utils.cpp LINK_LIBRARIES logging::logging)` 
 will create a library off of `src/MyProj.cpp` and any file in `src/`
-ending in "Utils.cpp", and links against the ERS (Error Reporting
-System) library
+ending in "Utils.cpp", and links against the [logging library](https://dune-daq-sw.readthedocs.io/en/latest/packages/logging/)
 
 Public headers for users of the library should go in the project's
 `include/<project name>` directory. Private headers used in the

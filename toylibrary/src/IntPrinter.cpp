@@ -10,15 +10,14 @@
 
 #include "toylibrary/IntPrinter.hpp"
 
-#include "ers/ers.hpp"
+#include "logging/Logging.hpp"
 
 namespace dunedaq::toylibrary {
 
 void
 IntPrinter::Show() const
 {
-
-  std::cout << int_to_print_ << std::endl; // NOLINT
+  TLOG() << int_to_print_ << std::endl;
 }
 
 } // namespace dunedaq::toylibrary
