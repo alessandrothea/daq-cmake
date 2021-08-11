@@ -628,6 +628,13 @@ function(daq_add_unit_test testname)
 
 endfunction()
 
+function(daq_create_documentation)
+    cmake_parse_arguments(DOXY "" "" "EXCLUDE;DEPENDS" ${ARGN})
+    include(daq-Doxygen)
+    create_doxygen_documentation(EXCLUDE ${DOXY_EXCLUDE} DEPENDS ${DOXY_DEPENDS})
+
+endfunction()
+
 ####################################################################################################
 
 # _daq_gather_info:
