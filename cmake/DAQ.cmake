@@ -663,16 +663,20 @@ function(daq_oks_codegen)
 
    set(GENCONFIG_DEPENDS genconfig)
 
-   # Notice we need to locally-override DUNEDAQ_SHARE_PATH since this
+   # JCF, Apr-16-2024: since DUNEDAQ_DB_PATH contains source directories,
+   # the following statement (and the workaround it justifies) may no longer
+   # be necessary:
+   
+   # Notice we need to locally-override DUNEDAQ_DB_PATH since this
    # variable typically refers to installed directories, but
    # installation only happens after building is complete
-
+   
    string(JOIN ":" PATHS_TO_SEARCH ${dep_paths})
 
    add_custom_command(
      OUTPUT ${cpp_source} genconfig_${TARGETNAME}/genconfig.info 
      COMMAND mkdir -p ${cpp_dir} ${hpp_dir} genconfig_${TARGETNAME}
-     COMMAND ${CMAKE_COMMAND} -E env DUNEDAQ_SHARE_PATH=${PATHS_TO_SEARCH} ${GENCONFIG_BINARY} -i ${hpp_dir_relative} -n ${NAMESPACE} -d ${cpp_dir} -I ${GENCONFIG_INCLUDES} -s ${schemas}
+     COMMAND ${CMAKE_COMMAND} -E env DUNEDAQ_DB_PATH=${PATHS_TO_SEARCH} ${GENCONFIG_BINARY} -i ${hpp_dir_relative} -n ${NAMESPACE} -d ${cpp_dir} -I ${GENCONFIG_INCLUDES} -s ${schemas}
      COMMAND cp -f ${cpp_dir}/*.hpp ${hpp_dir}/
      COMMAND cp genconfig.info genconfig_${TARGETNAME}/
      DEPENDS ${schemas} ${config_dependencies} ${GENCONFIG_DEPENDS} 
