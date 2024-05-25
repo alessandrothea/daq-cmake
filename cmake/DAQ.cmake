@@ -127,6 +127,10 @@ macro(daq_setup_environment)
   _daq_gather_info( TARGET ${PROJECT_NAME}_build_info SUMMARY_FILE ${DAQ_PROJECT_SUMMARY_FILENAME} )
   add_dependencies( ${PRE_BUILD_STAGE_DONE_TRGT} ${PROJECT_NAME}_build_info )
 
+  if ( EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/schema )
+    execute_process(COMMAND mkdir -p ${CMAKE_CODEGEN_BINARY_DIR}/include)
+  endif()
+
 endmacro()
 
 
