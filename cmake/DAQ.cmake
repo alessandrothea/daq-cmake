@@ -127,10 +127,6 @@ macro(daq_setup_environment)
   _daq_gather_info( TARGET ${PROJECT_NAME}_build_info SUMMARY_FILE ${DAQ_PROJECT_SUMMARY_FILENAME} )
   add_dependencies( ${PRE_BUILD_STAGE_DONE_TRGT} ${PROJECT_NAME}_build_info )
 
-  if ( EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/schema )
-    execute_process(COMMAND mkdir -p ${CMAKE_CODEGEN_BINARY_DIR}/include)
-  endif()
-
 endmacro()
 
 
@@ -471,11 +467,14 @@ function (daq_protobuf_codegen)
     list(APPEND protoc_includes "-I${dep_path}")
   endforeach()
 
+  if (NOT EXISTS ${outdir})
+    file(MAKE_DIRECTORY ${outdir})
+  endif()
+
   if (${PROTOBUFOPTS_GEN_GRPC})
 
     add_custom_command(
       OUTPUT ${outfiles}
-      COMMAND mkdir -p ${outdir}
 
       COMMAND protoc
               ${protoc_includes}
@@ -499,7 +498,6 @@ function (daq_protobuf_codegen)
 
     add_custom_command(
       OUTPUT ${outfiles}
-      COMMAND mkdir -p ${outdir}
 
       COMMAND protoc
               ${protoc_includes}
@@ -677,9 +675,13 @@ function(daq_oks_codegen)
    
    string(JOIN ":" PATHS_TO_SEARCH ${dep_paths})
 
+   if (NOT EXISTS ${hpp_dir})
+     file(MAKE_DIRECTORY ${hpp_dir})
+   endif()
+
    add_custom_command(
      OUTPUT ${cpp_source} genconfig_${TARGETNAME}/genconfig.info 
-     COMMAND mkdir -p ${cpp_dir} ${hpp_dir} genconfig_${TARGETNAME}
+     COMMAND mkdir -p ${cpp_dir} genconfig_${TARGETNAME}
      COMMAND ${CMAKE_COMMAND} -E env DUNEDAQ_DB_PATH=${PATHS_TO_SEARCH} ${GENCONFIG_BINARY} -i ${hpp_dir_relative} -n ${NAMESPACE} -d ${cpp_dir} -I ${GENCONFIG_INCLUDES} -s ${schemas}
      COMMAND cp -f ${cpp_dir}/*.hpp ${hpp_dir}/
      COMMAND cp genconfig.info genconfig_${TARGETNAME}/
