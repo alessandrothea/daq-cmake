@@ -525,7 +525,7 @@ endfunction()
 #                      [DALDIR subdir]
 #		       [DEP_PKGS pkg1 pkg2 ...]
 #
-# `daq_oks_codegen` uses the genconfig package's application of the same
+# `daq_oks_codegen` uses the oksdalgen package's application of the same
 # name to generate C++ and Python code from the OKS schema file(s)
 # provided to it.
 #
@@ -566,11 +566,11 @@ function(daq_oks_codegen)
      message(FATAL_ERROR "You are using more than one daq_oks_codegen() command inside this package; this is not allowed. Exiting...")
    endif()
 
-   if (NOT DEFINED GENCONFIG_BINARY) 
-     message(FATAL_ERROR "In order to call this function (daq_oks_codegen) you need to load the genconfig package in your CMakeLists.txt file via the find_package call")
+   if (NOT DEFINED OKSDALGEN_BINARY) 
+     message(FATAL_ERROR "In order to call this function (daq_oks_codegen) you need to load the oksdalgen package in your CMakeLists.txt file via the find_package call")
    endif()
 
-   set(LIST GENCONFIG_INCLUDES ${CMAKE_CURRENT_BINARY_DIR}/genconfig_${TARGETNAME}/ )
+   set(LIST OKSDALGEN_INCLUDES ${CMAKE_CURRENT_BINARY_DIR}/oksdalgen_${TARGETNAME}/ )
 
    set(hpp_dir_prefix ${CMAKE_CODEGEN_BINARY_DIR} )
   if (${config_opts_TEST})
@@ -611,7 +611,7 @@ function(daq_oks_codegen)
        if (EXISTS ${CMAKE_SOURCE_DIR}/${dep_pkg})
          list(APPEND config_dependencies DAL_${dep_pkg})
          list(APPEND dep_paths "${CMAKE_SOURCE_DIR}/${dep_pkg}")
-         list(APPEND GENCONFIG_INCLUDES ${CMAKE_CURRENT_BINARY_DIR}/../${dep_pkg}/genconfig_DAL_${dep_pkg} )
+         list(APPEND OKSDALGEN_INCLUDES ${CMAKE_CURRENT_BINARY_DIR}/../${dep_pkg}/oksdalgen_DAL_${dep_pkg} )
        else()      					
          if (NOT DEFINED "${dep_pkg}_DAQSHARE")
            if (NOT DEFINED "${dep_pkg}_CONFIG")
@@ -622,7 +622,7 @@ function(daq_oks_codegen)
          endif()
         
          list(APPEND dep_paths "${${dep_pkg}_DAQSHARE}")
-         list(APPEND GENCONFIG_INCLUDES "${${dep_pkg}_DAQSHARE}/genconfig_DAL_${dep_pkg}")
+         list(APPEND OKSDALGEN_INCLUDES "${${dep_pkg}_DAQSHARE}/oksdalgen_DAL_${dep_pkg}")
        endif()
      endforeach()
    endif()
@@ -658,12 +658,12 @@ function(daq_oks_codegen)
    
    separate_arguments(cpp_source)
 
-   if (NOT TARGET genconfig)
-     add_custom_target( genconfig )
-     add_dependencies( genconfig genconfig::genconfig)
+   if (NOT TARGET oksdalgen)
+     add_custom_target( oksdalgen )
+     add_dependencies( oksdalgen oksdalgen::oksdalgen)
    endif()
 
-   set(GENCONFIG_DEPENDS genconfig)
+   set(OKSDALGEN_DEPENDS oksdalgen)
 
    # JCF, Apr-16-2024: since DUNEDAQ_DB_PATH contains source directories,
    # the following statement (and the workaround it justifies) may no longer
@@ -680,18 +680,18 @@ function(daq_oks_codegen)
    endif()
 
    add_custom_command(
-     OUTPUT ${cpp_source} genconfig_${TARGETNAME}/genconfig.info 
-     COMMAND mkdir -p ${cpp_dir} genconfig_${TARGETNAME}
-     COMMAND ${CMAKE_COMMAND} -E env DUNEDAQ_DB_PATH=${PATHS_TO_SEARCH} ${GENCONFIG_BINARY} -i ${hpp_dir_relative} -n ${NAMESPACE} -d ${cpp_dir} -I ${GENCONFIG_INCLUDES} -s ${schemas}
+     OUTPUT ${cpp_source} oksdalgen_${TARGETNAME}/oksdalgen.info 
+     COMMAND mkdir -p ${cpp_dir} oksdalgen_${TARGETNAME}
+     COMMAND ${CMAKE_COMMAND} -E env DUNEDAQ_DB_PATH=${PATHS_TO_SEARCH} ${OKSDALGEN_BINARY} -i ${hpp_dir_relative} -n ${NAMESPACE} -d ${cpp_dir} -I ${OKSDALGEN_INCLUDES} -s ${schemas}
      COMMAND cp -f ${cpp_dir}/*.hpp ${hpp_dir}/
-     COMMAND cp genconfig.info genconfig_${TARGETNAME}/
-     DEPENDS ${schemas} ${config_dependencies} ${GENCONFIG_DEPENDS} 
+     COMMAND cp oksdalgen.info oksdalgen_${TARGETNAME}/
+     DEPENDS ${schemas} ${config_dependencies} ${OKSDALGEN_DEPENDS} 
 )
 
-   add_custom_target(${TARGETNAME} ALL DEPENDS ${cpp_source} genconfig_${TARGETNAME}/genconfig.info)
+   add_custom_target(${TARGETNAME} ALL DEPENDS ${cpp_source} oksdalgen_${TARGETNAME}/oksdalgen.info)
    add_dependencies( ${PRE_BUILD_STAGE_DONE_TRGT} ${TARGETNAME})
 
-   install(DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/genconfig_${TARGETNAME} DESTINATION ${CMAKE_INSTALL_DATADIR})
+   install(DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/oksdalgen_${TARGETNAME} DESTINATION ${CMAKE_INSTALL_DATADIR})
 
   set(DAQ_PROJECT_INSTALLS_TARGETS true PARENT_SCOPE)
   set(DAQ_PROJECT_GENERATES_CODE true PARENT_SCOPE)
@@ -700,7 +700,7 @@ function(daq_oks_codegen)
   else()
     set(TEST_OKS_FILES ${cpp_source} PARENT_SCOPE)
   endif()
-  set(ANY_OKS_LIBS oksdbinterfaces::oksdbinterfaces PARENT_SCOPE)
+  set(ANY_OKS_LIBS conffwk::conffwk PARENT_SCOPE)
 
 endfunction()
 
