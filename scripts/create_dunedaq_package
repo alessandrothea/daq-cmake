@@ -151,10 +151,20 @@ os.chdir(PACKAGEDIR)
 os.makedirs(".github/workflows")
 os.chdir(".github/workflows")
 
+ca_cert_file = os.getenv('SSL_CERT_FILE')
+if not ca_cert_file:
+    print('WARNING: SSL_CERT_FILE not found. Workflow yamls won\'t be downloaded correctly')
+    sys.exit(1)
+
 for filename in ["dunedaq-v4-cpp-ci.yml", "track_new_issues.yml", "track_new_prs.yml"]:
-    res = subprocess.Popen(f"curl -O https://raw.githubusercontent.com/DUNE-DAQ/.github/develop/workflow-templates/{filename}", shell=True).wait()
-    if res != 0:
+    command = f"curl -O --cacert {ca_cert_file} https://raw.githubusercontent.com/DUNE-DAQ/.github/develop/workflow-templates/{filename}"
+    process = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    stdout, stderr = process.communicate()
+
+    exit_code = process.returncode
+    if exit_code != 0:
         print("WARNING: unable to download desired GitHub workflow \"{filename}\". Please contact John Freeman on Slack")
+        print(f"Output of stderr: {stderr}")
 
 os.chdir(PACKAGEDIR)
 
