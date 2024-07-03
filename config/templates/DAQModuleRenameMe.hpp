@@ -24,7 +24,7 @@ class RenameMe : public dunedaq::appfwk::DAQModule
 public:
   explicit RenameMe(const std::string& name);
 
-  void init(const data_t&) override;
+  void init(std::shared_ptr<appfwk::ModuleConfiguration>) override;
 
   void get_info(opmonlib::InfoCollector&, int /*level*/) override;
 
@@ -45,12 +45,8 @@ private:
   // RenameMe.cpp you would implement do_conf so that members of
   // RenameMe get assigned values from a configuration passed as 
   // an argument and originating from the CCM system.
-  // To see an example of this value assignment, look at the implementation of 
-  // do_conf in RenameMe.cpp
 
   void do_conf(const data_t&);
-
-  int m_some_configured_value { std::numeric_limits<int>::max() }; // Intentionally-ridiculous value pre-configuration
 
   // TO package DEVELOPERS: PLEASE DELETE THIS FOLLOWING COMMENT AFTER READING IT 
   // m_total_amount and m_amount_since_last_get_info_call are examples

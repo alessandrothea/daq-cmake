@@ -24,7 +24,7 @@ RenameMe::RenameMe(const std::string& name)
 }
 
 void
-RenameMe::init(const data_t& /* structured args */)
+RenameMe::init(std::shared_ptr<appfwk::ModuleConfiguration> /* mcfg */)
 {}
 
 void
@@ -38,10 +38,8 @@ RenameMe::get_info(opmonlib::InfoCollector& ci, int /* level */)
 }
 
 void
-RenameMe::do_conf(const data_t& conf_as_json)
+RenameMe::do_conf(const data_t& /* do not pass an argument*/ )
 {
-  auto conf_as_cpp = conf_as_json.get<renameme::Conf>();
-  m_some_configured_value = conf_as_cpp.some_configured_value;
 }
 
 } // namespace dunedaq::package
