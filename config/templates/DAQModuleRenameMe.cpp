@@ -10,7 +10,6 @@
 
 #include "RenameMe.hpp"
 
-#include "package/renameme/Nljs.hpp"
 #include "package/renamemeinfo/InfoNljs.hpp"
 
 #include <string>
