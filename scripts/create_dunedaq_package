@@ -49,9 +49,6 @@ Arguments and options:
 
 --test-app: same as --daq-module, but for integration test applications
 
---config-generation: whether to generate a script which itself will generate 
-                     JSON code to create an application based on the package
-
 For details on how to write a DUNE DAQ package, please look at the official 
 daq-cmake documentation at 
 https://dune-daq-sw.readthedocs.io/en/latest/packages/daq-cmake/
@@ -204,11 +201,10 @@ Please see https://dune-daq-sw.readthedocs.io/en/latest/packages/styleguide/
 for more on naming conventions. Exiting...
 """)
 
-        daq_add_plugin_calls.append(f"daq_add_plugin({module} duneDAQModule LINK_LIBRARIES appfwk::appfwk) # Replace appfwk library with a more specific library when appropriate")
-        daq_codegen_calls.append(f"daq_codegen({module.lower()}.jsonnet TEMPLATES Structs.hpp.j2 Nljs.hpp.j2)") 
+        daq_add_plugin_calls.append(f"daq_add_plugin({module} duneDAQModule LINK_LIBRARIES appfwk::appfwk) # Replace appfwk library with a more specific library if and when appropriate")
         daq_codegen_calls.append(f"daq_codegen({module.lower()}info.jsonnet DEP_PKGS opmonlib TEMPLATES opmonlib/InfoStructs.hpp.j2 opmonlib/InfoNljs.hpp.j2)")
 
-        for src_filename in ["DAQModuleRenameMe.hpp", "DAQModuleRenameMe.cpp", "daqmodulerenameme.jsonnet", "daqmoduleinforenameme.jsonnet"]:
+        for src_filename in ["DAQModuleRenameMe.hpp", "DAQModuleRenameMe.cpp", "daqmoduleinforenameme.jsonnet"]:
 
             if pathlib.Path(src_filename).suffix in [".hpp", ".cpp"]:
                 DEST_FILENAME = src_filename.replace("DAQModuleRenameMe", module)
@@ -217,7 +213,7 @@ for more on naming conventions. Exiting...
                 if "info" in src_filename:
                     DEST_FILENAME = src_filename.replace("daqmoduleinforenameme", module.lower() + "info")
                 else:
-                    DEST_FILENAME = src_filename.replace("daqmodulerenameme", module.lower())
+                    assert False, "Developer error, please contact John Freeman, jcfree@fnal.gov"
 
                 DEST_FILENAME = f"{PACKAGEDIR}/schema/{PACKAGE}/{DEST_FILENAME}"
             else:
