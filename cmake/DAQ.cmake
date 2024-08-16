@@ -476,14 +476,14 @@ function (daq_protobuf_codegen)
     add_custom_command(
       OUTPUT ${outfiles}
 
-      COMMAND protoc
+      COMMAND ${PROTOBUF_PROTOC_EXECUTABLE}
               ${protoc_includes}
               --cpp_out=${outinc}
               --grpc_out=${outinc}
               --plugin=protoc-gen-grpc=`which grpc_cpp_plugin`
               ${protofiles}
 
-      COMMAND protoc
+      COMMAND ${PROTOBUF_PROTOC_EXECUTABLE}
               ${protoc_includes}
               --python_out=${outinc}
               --grpc_out=${outinc}
@@ -499,7 +499,7 @@ function (daq_protobuf_codegen)
     add_custom_command(
       OUTPUT ${outfiles}
 
-      COMMAND protoc
+      COMMAND ${PROTOBUF_PROTOC_EXECUTABLE}
               ${protoc_includes}
               --cpp_out=${outinc}
               --python_out=${outinc}
