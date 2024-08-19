@@ -10,7 +10,7 @@
 
 #include "RenameMe.hpp"
 
-#include "package/opmon/package_info.pb.h"
+#include "package/opmon/renameme_info.pb.h"
 
 #include <string>
 

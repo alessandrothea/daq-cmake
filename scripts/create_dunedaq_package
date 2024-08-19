@@ -192,6 +192,8 @@ if args.daq_modules:
     make_package_subdir(f"{PACKAGEDIR}/plugins")
     make_package_subdir(f"{PACKAGEDIR}/schema/{PACKAGE}/opmon")
 
+    daq_protobuf_codegen_calls.append(f"daq_protobuf_codegen(opmon/*.proto)")
+
     for module in args.daq_modules:
         if not re.search(r"^[A-Z][^_]+", module):
             wipe_package_directory()
@@ -202,15 +204,14 @@ for more on naming conventions. Exiting...
 """)
 
         daq_add_plugin_calls.append(f"daq_add_plugin({module} duneDAQModule LINK_LIBRARIES {PACKAGE} appfwk::appfwk) # The appfwk library is needed for DAQModule base class")
-        daq_protobuf_codegen_calls.append(f"daq_protobuf_codegen(opmon/*.proto)")
 
-        for src_filename in ["DAQModuleRenameMe.hpp", "DAQModuleRenameMe.cpp", "package_info.proto"]:
+        for src_filename in ["DAQModuleRenameMe.hpp", "DAQModuleRenameMe.cpp", "renameme_info.proto"]:
 
             if pathlib.Path(src_filename).suffix in [".hpp", ".cpp"]:
                 DEST_FILENAME = src_filename.replace("DAQModuleRenameMe", module)
                 DEST_FILENAME = f"{PACKAGEDIR}/plugins/{DEST_FILENAME}"
             elif pathlib.Path(src_filename).suffix in [".proto"]:
-                DEST_FILENAME = src_filename.replace("package_info", f"{PACKAGE}_info")
+                DEST_FILENAME = src_filename.replace("renameme", module.lower())
 
                 DEST_FILENAME = f"{PACKAGEDIR}/schema/{PACKAGE}/opmon/{DEST_FILENAME}"
             else:
