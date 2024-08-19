@@ -348,6 +348,11 @@ endfunction()
 # Usage:
 # daq_protobuf_codegen( <protobuf filename1> ... [TEST] [GEN_GRPC] [DEP_PKGS <package 1> ...] )
 #
+# Requirements for calling this function:
+# 1) You need to call `find_package(opmonlib REQUIRED)` in your `CMakeLists.txt` file
+# 2) You also need to call `daq_add_library`, i.e., have a main package-wide library, and link it against the opmonlib library
+# 3) You need to call `find_package(gRPC REQUIRED)` before calling this function if you have specified `GEN_GRPC`.
+#
 # Arguments:
 #    <protobuf filename1> ...: The list of *.proto files for protobuf's "protoc" program to process from <package>/schema/<package>. Globs also allowed.
 #
@@ -366,10 +371,6 @@ endfunction()
 # well as a Python file. The header will be installed in the public
 # include directory. The source file will be built as part of the main
 # package library.
-#
-# Two requirements for calling this function:
-# 1) You need to call find_package(Protobuf REQUIRED) to make the protobuf library available
-# 2) You also need to call daq_add_library, i.e., have a main packagewide library
 
 function (daq_protobuf_codegen)
 

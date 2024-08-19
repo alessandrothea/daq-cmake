@@ -270,6 +270,11 @@ Usage:
 daq_protobuf_codegen( <protobuf filename1> ... [TEST] [GEN_GRPC] [DEP_PKGS <package 1> ...] )
 ```
 
+Requirements for calling this function:
+1) You need to call `find_package(opmonlib REQUIRED)` in your `CMakeLists.txt` file
+2) You also need to call `daq_add_library`, i.e., have a main package-wide library, and link it against the opmonlib library
+3) You need to call `find_package(gRPC REQUIRED)` before calling this function if you have specified `GEN_GRPC`.
+
 Arguments:
 
 * `<protobuf filename1> ...`: these arguments are the list of `*.proto` files for protobuf's "protoc" program to process from `<package>/schema/<package>`. Globs also allowed.
@@ -293,11 +298,6 @@ The generated python file will be called `*_grpc_pb2.py` and will be installed i
 
 The source file will be built as part of the main package library.
 Its compilation will be done automatically, i.e. there is no need to add `*.pb.cc` in the `daq_add_library` directive of your package: `daq_protobuf_codegen` will suffice.
-
-Two requirements for calling this function:
-1) You need to call `find_package(Protobuf REQUIRED)` to make the protobuf library available
-2) You also need to call `daq_add_library`, i.e., have a main package-wide library
-3) You need to call `find_package(gRPC REQUIRED)` before calling this function if you have specified `GEN_GRPC`.
 
 ### daq_add_python_bindings:
 Usage:
