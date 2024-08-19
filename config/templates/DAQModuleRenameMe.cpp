@@ -10,7 +10,7 @@
 
 #include "RenameMe.hpp"
 
-#include "package/renamemeinfo/InfoNljs.hpp"
+#include "package/opmon/package_info.pb.h"
 
 #include <string>
 
@@ -27,13 +27,12 @@ RenameMe::init(std::shared_ptr<appfwk::ModuleConfiguration> /* mcfg */)
 {}
 
 void
-RenameMe::get_info(opmonlib::InfoCollector& ci, int /* level */)
+RenameMe::generate_opmon_data()
 {
-  renamemeinfo::Info info;
-  info.total_amount = m_total_amount;
-  info.amount_since_last_get_info_call = m_amount_since_last_get_info_call.exchange(0);
-
-  ci.add(info);
+  opmon::RenameMeInfo info;
+  info.set_total_amount(m_total_amount.load());
+  info.set_amount_since_last_call(m_amount_since_last_call.exchange(0));
+  publish(std::move(info));
 }
 
 void
