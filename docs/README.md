@@ -417,7 +417,7 @@ arguments.
 
 ## Schemas and code generation
 
-`daq-cmake` supports for schema distribution and code generation with [moo](https://github.com/brettviren/moo/), [protobuf](https://protobuf.dev/programming-guides/proto3/) and [OKS](https://github.com/DUNE-DAQ/oks).
+`daq-cmake` supports for schema distribution and code generation with [moo](https://github.com/brettviren/moo/), [protobuf](https://protobuf.dev/programming-guides/proto3/) and [OKS](https://github.com/DUNE-DAQ/dal).
 
 1. Schemas (jsonnet), models (jsonnet) and templates (Jinja) in the `schema/<package name>` folder are automatically copied to the installation directory and into Spack products eventually.
 
