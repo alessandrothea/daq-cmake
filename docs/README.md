@@ -270,6 +270,11 @@ Usage:
 daq_protobuf_codegen( <protobuf filename1> ... [TEST] [GEN_GRPC] [DEP_PKGS <package 1> ...] )
 ```
 
+Requirements for calling this function:
+1) You need to call `find_package(opmonlib REQUIRED)` in your `CMakeLists.txt` file
+2) You also need to call `daq_add_library`, i.e., have a main package-wide library, and link it against the opmonlib library
+3) You need to call `find_package(gRPC REQUIRED)` before calling this function if you have specified `GEN_GRPC`.
+
 Arguments:
 
 * `<protobuf filename1> ...`: these arguments are the list of `*.proto` files for protobuf's "protoc" program to process from `<package>/schema/<package>`. Globs also allowed.
@@ -293,11 +298,6 @@ The generated python file will be called `*_grpc_pb2.py` and will be installed i
 
 The source file will be built as part of the main package library.
 Its compilation will be done automatically, i.e. there is no need to add `*.pb.cc` in the `daq_add_library` directive of your package: `daq_protobuf_codegen` will suffice.
-
-Two requirements for calling this function:
-1) You need to call `find_package(Protobuf REQUIRED)` to make the protobuf library available
-2) You also need to call `daq_add_library`, i.e., have a main package-wide library
-3) You need to call `find_package(gRPC REQUIRED)` before calling this function if you have specified `GEN_GRPC`.
 
 ### daq_add_python_bindings:
 Usage:
@@ -417,7 +417,7 @@ arguments.
 
 ## Schemas and code generation
 
-`daq-cmake` supports for schema distribution and code generation with [moo](https://github.com/brettviren/moo/)
+`daq-cmake` supports for schema distribution and code generation with [moo](https://github.com/brettviren/moo/), [protobuf](https://protobuf.dev/programming-guides/proto3/) and [OKS](https://github.com/DUNE-DAQ/dal).
 
 1. Schemas (jsonnet), models (jsonnet) and templates (Jinja) in the `schema/<package name>` folder are automatically copied to the installation directory and into Spack products eventually.
 
@@ -441,10 +441,11 @@ appfwk/
 ├── python
 ├── schema
 │   ├── appfwk
-│   │   ├── appinfo.jsonnet
 │   │   ├── app.jsonnet
 │   │   ├── cmd.jsonnet
-│   ├── README.md
+│   │   └── opmon
+│   │       └── appinfo.proto
+│   └── README.md
 ├── src
 ├── test
 └── unittest
@@ -456,6 +457,7 @@ appfwk/
 local s = moo.oschema.schema("dunedaq.appfwk.cmd");
 ```
 
-The same applies to `app.jsonnet` and `appinfo.jsonnet` for `dunedaq.appfwk.app` and `dunedaq.appfwk.appinfo`.
+The same applies to `app.jsonnet` for `dunedaq.appfwk.app`.
+
 
 The matching between the schema file name/path and the jsonnet namespace is essential for code generation with `daq-cmake`. A mismatch between the two will result in empty generated files in most of the cases.

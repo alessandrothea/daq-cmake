@@ -144,7 +144,7 @@ and/or a README.md documentation file.
 os.chdir(PACKAGEDIR)
 
 find_package_calls = []
-daq_codegen_calls = []
+daq_protobuf_codegen_calls = []
 daq_add_library_calls = []
 daq_add_python_bindings_calls = []
 daq_add_plugin_calls = []
@@ -156,7 +156,7 @@ print("")
 if args.contains_main_library:
     make_package_subdir(f"{PACKAGEDIR}/src")
     make_package_subdir(f"{PACKAGEDIR}/include/{PACKAGE}")
-    daq_add_library_calls.append("daq_add_library( LINK_LIBRARIES ) # Any source files and/or dependent libraries to link in not yet determined")
+    daq_add_library_calls.append("daq_add_library( LINK_LIBRARIES opmonlib::opmonlib) # We need to link in the opmonlib library for Protobuf-generated code to compile")
 
 if args.contains_python_bindings:
     make_package_subdir(f"{PACKAGEDIR}/pybindsrc")
@@ -190,7 +190,9 @@ if args.daq_modules:
 
     make_package_subdir(f"{PACKAGEDIR}/src")
     make_package_subdir(f"{PACKAGEDIR}/plugins")
-    make_package_subdir(f"{PACKAGEDIR}/schema/{PACKAGE}")
+    make_package_subdir(f"{PACKAGEDIR}/schema/{PACKAGE}/opmon")
+
+    daq_protobuf_codegen_calls.append(f"daq_protobuf_codegen(opmon/*.proto)")
 
     for module in args.daq_modules:
         if not re.search(r"^[A-Z][^_]+", module):
@@ -201,21 +203,17 @@ Please see https://dune-daq-sw.readthedocs.io/en/latest/packages/styleguide/
 for more on naming conventions. Exiting...
 """)
 
-        daq_add_plugin_calls.append(f"daq_add_plugin({module} duneDAQModule LINK_LIBRARIES appfwk::appfwk) # Replace appfwk library with a more specific library if and when appropriate")
-        daq_codegen_calls.append(f"daq_codegen({module.lower()}info.jsonnet DEP_PKGS opmonlib TEMPLATES opmonlib/InfoStructs.hpp.j2 opmonlib/InfoNljs.hpp.j2)")
+        daq_add_plugin_calls.append(f"daq_add_plugin({module} duneDAQModule LINK_LIBRARIES {PACKAGE} appfwk::appfwk) # The appfwk library is needed for DAQModule base class")
 
-        for src_filename in ["DAQModuleRenameMe.hpp", "DAQModuleRenameMe.cpp", "daqmoduleinforenameme.jsonnet"]:
+        for src_filename in ["DAQModuleRenameMe.hpp", "DAQModuleRenameMe.cpp", "renameme_info.proto"]:
 
             if pathlib.Path(src_filename).suffix in [".hpp", ".cpp"]:
                 DEST_FILENAME = src_filename.replace("DAQModuleRenameMe", module)
                 DEST_FILENAME = f"{PACKAGEDIR}/plugins/{DEST_FILENAME}"
-            elif pathlib.Path(src_filename).suffix in [".jsonnet"]:
-                if "info" in src_filename:
-                    DEST_FILENAME = src_filename.replace("daqmoduleinforenameme", module.lower() + "info")
-                else:
-                    assert False, "Developer error, please contact John Freeman, jcfree@fnal.gov"
+            elif pathlib.Path(src_filename).suffix in [".proto"]:
+                DEST_FILENAME = src_filename.replace("renameme", module.lower())
 
-                DEST_FILENAME = f"{PACKAGEDIR}/schema/{PACKAGE}/{DEST_FILENAME}"
+                DEST_FILENAME = f"{PACKAGEDIR}/schema/{PACKAGE}/opmon/{DEST_FILENAME}"
             else:
                 assert False, "SCRIPT ERROR: unhandled filename"
 
@@ -230,9 +228,20 @@ for more on naming conventions. Exiting...
             sourcecode = sourcecode.replace("PACKAGE", PACKAGE.upper())
             sourcecode = sourcecode.replace("RENAMEME", module.upper())
 
-            # Handle namespace
-            sourcecode = sourcecode.replace("package", PACKAGE.lower())
+            # Handle namespace, etc.
+            # Note that *.proto files, newly added, already *have* the token "package"
+            # as part of legitimate code (as opposed to a placeholder value), thus this
+            # awkward if-statement
 
+            if pathlib.Path(src_filename).suffix in [".hpp", ".cpp"]:
+                sourcecode = sourcecode.replace("package", PACKAGE.lower())
+            elif pathlib.Path(src_filename).suffix in [".proto"]:
+                sourcecode = sourcecode.replace("pkg", PACKAGE.lower())
+            else:
+                assert False, "SCRIPT ERROR: unhandled filename"
+            
+
+            
             # And schema files
             sourcecode = sourcecode.replace("renameme", module.lower())
 
@@ -374,7 +383,7 @@ daq_setup_environment()
 """)
 
     print_cmakelists_section(find_package_calls)
-    print_cmakelists_section(daq_codegen_calls, "daq_codegen")
+    print_cmakelists_section(daq_protobuf_codegen_calls, "daq_protobuf_codegen")
     print_cmakelists_section(daq_add_library_calls, "daq_add_library")
     print_cmakelists_section(daq_add_python_bindings_calls, "daq_add_python_bindings")
     print_cmakelists_section(daq_add_plugin_calls, "daq_add_plugin")

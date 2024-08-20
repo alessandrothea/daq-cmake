@@ -26,14 +26,15 @@ public:
 
   void init(std::shared_ptr<appfwk::ModuleConfiguration>) override;
 
-  void get_info(opmonlib::InfoCollector&, int /*level*/) override;
-
   RenameMe(const RenameMe&) = delete;
   RenameMe& operator=(const RenameMe&) = delete;
   RenameMe(RenameMe&&) = delete;
   RenameMe& operator=(RenameMe&&) = delete;
 
   ~RenameMe() = default;
+
+protected:
+  void generate_opmon_data() override;
 
 private:
   // Commands RenameMe can receive
@@ -57,7 +58,7 @@ private:
   // obviously you'd want to replace this "in real life"
 
   std::atomic<int64_t> m_total_amount {0};
-  std::atomic<int>     m_amount_since_last_get_info_call {0};
+  std::atomic<int>     m_amount_since_last_call {0};
 };
 
 } // namespace dunedaq::package
