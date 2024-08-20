@@ -417,7 +417,7 @@ arguments.
 
 ## Schemas and code generation
 
-`daq-cmake` supports for schema distribution and code generation with [moo](https://github.com/brettviren/moo/)
+`daq-cmake` supports for schema distribution and code generation with [moo](https://github.com/brettviren/moo/), [protobuf](https://protobuf.dev/programming-guides/proto3/) and [OKS](https://github.com/DUNE-DAQ/dal).
 
 1. Schemas (jsonnet), models (jsonnet) and templates (Jinja) in the `schema/<package name>` folder are automatically copied to the installation directory and into Spack products eventually.
 
@@ -441,10 +441,11 @@ appfwk/
 ├── python
 ├── schema
 │   ├── appfwk
-│   │   ├── appinfo.jsonnet
 │   │   ├── app.jsonnet
 │   │   ├── cmd.jsonnet
-│   ├── README.md
+│   │   └── opmon
+│   │       └── appinfo.proto
+│   └── README.md
 ├── src
 ├── test
 └── unittest
@@ -456,6 +457,7 @@ appfwk/
 local s = moo.oschema.schema("dunedaq.appfwk.cmd");
 ```
 
-The same applies to `app.jsonnet` and `appinfo.jsonnet` for `dunedaq.appfwk.app` and `dunedaq.appfwk.appinfo`.
+The same applies to `app.jsonnet` for `dunedaq.appfwk.app`.
+
 
 The matching between the schema file name/path and the jsonnet namespace is essential for code generation with `daq-cmake`. A mismatch between the two will result in empty generated files in most of the cases.
