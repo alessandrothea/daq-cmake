@@ -104,7 +104,14 @@ macro(daq_setup_environment)
   set(DAQ_PROJECT_GENERATES_CODE false)
   set(DAQ_PROJECT_GENERATES_GRPC false)
 
-  set(COMPILER_OPTS -g -pedantic -Wall -Wextra -Wnon-virtual-dtor -fdiagnostics-color=always)
+  # JCF, Dec-13-2024
+
+  # Add the -mavx2 (Advanced Vector Extensions 2) flag. This is
+  # because fdreadoutlibs uses both it and folly, but folly, when
+  # built with this flag, refuses to link against code which doesn't
+  # use it.
+  
+  set(COMPILER_OPTS -g -pedantic -Wall -Wextra -Wnon-virtual-dtor -fdiagnostics-color=always -mavx2 )
 
   if (${DBT_DEBUG})
     set(COMPILER_OPTS ${COMPILER_OPTS} -Og)
