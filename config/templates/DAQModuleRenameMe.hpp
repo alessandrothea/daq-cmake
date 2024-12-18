@@ -24,7 +24,7 @@ class RenameMe : public dunedaq::appfwk::DAQModule
 public:
   explicit RenameMe(const std::string& name);
 
-  void init(std::shared_ptr<appfwk::ModuleConfiguration>) override;
+  void init(std::shared_ptr<appfwk::ConfigurationManager>) override;
 
   RenameMe(const RenameMe&) = delete;
   RenameMe& operator=(const RenameMe&) = delete;
