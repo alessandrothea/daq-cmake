@@ -104,14 +104,14 @@ macro(daq_setup_environment)
   set(DAQ_PROJECT_GENERATES_CODE false)
   set(DAQ_PROJECT_GENERATES_GRPC false)
 
-  # JCF, Dec-13-2024
+  # JCF, Dec-30-2024
 
-  # Add the -mavx2 (Advanced Vector Extensions 2) flag. This is
-  # because fdreadoutlibs uses both it and folly, but folly, when
-  # built with this flag, refuses to link against code which doesn't
-  # use it.
+  # Define FOLLY_F14_FORCE_FALLBACK so folly won't force linking
+  # problems if any of the translation units it links against are
+  # built with different options (see its F14IntrinsicsAvailability.h
+  # and F14Table.h headers for more)
   
-  set(COMPILER_OPTS -g -pedantic -Wall -Wextra -Wnon-virtual-dtor -fdiagnostics-color=always -mavx2 )
+  set(COMPILER_OPTS -g -pedantic -Wall -Wextra -Wnon-virtual-dtor -fdiagnostics-color=always -DFOLLY_F14_FORCE_FALLBACK )
 
   if (${DBT_DEBUG})
     set(COMPILER_OPTS ${COMPILER_OPTS} -Og)
