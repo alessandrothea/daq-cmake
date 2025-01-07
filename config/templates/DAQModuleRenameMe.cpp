@@ -23,7 +23,7 @@ RenameMe::RenameMe(const std::string& name)
 }
 
 void
-RenameMe::init(std::shared_ptr<appfwk::ModuleConfiguration> /* mcfg */)
+RenameMe::init(std::shared_ptr<appfwk::ConfigurationManager> /* mcfg */)
 {}
 
 void
