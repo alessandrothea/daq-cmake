@@ -104,7 +104,14 @@ macro(daq_setup_environment)
   set(DAQ_PROJECT_GENERATES_CODE false)
   set(DAQ_PROJECT_GENERATES_GRPC false)
 
-  set(COMPILER_OPTS -g -pedantic -Wall -Wextra -Wnon-virtual-dtor -fdiagnostics-color=always)
+  # JCF, Dec-30-2024
+
+  # Define FOLLY_F14_FORCE_FALLBACK so folly won't force linking
+  # problems if any of the translation units it links against are
+  # built with different options (see its F14IntrinsicsAvailability.h
+  # and F14Table.h headers for more)
+  
+  set(COMPILER_OPTS -g -pedantic -Wall -Wextra -Wnon-virtual-dtor -fdiagnostics-color=always -DFOLLY_F14_FORCE_FALLBACK )
 
   if (${DBT_DEBUG})
     set(COMPILER_OPTS ${COMPILER_OPTS} -Og)
